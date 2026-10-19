@@ -140,9 +140,10 @@ class ControlPanel:
         tk.Label(selling, text="自动出售 · 安全接入阶段", bg=PANEL, fg=TEXT,
                  font=("Segoe UI Semibold", 16)).pack(anchor="w")
         tk.Label(selling,
-                 text="当前原版源码包含自动制造、领取和部分材料购买流程；尚未发现可直接复用的出售页面识别与出售动作。\n\n"
-                      "因此本版本不会假装已经自动出售，也不会模拟点击出售。下一步应先实现仓库识别与出售清单预览，"
-                      "由你确认物品和价格后再执行；之后再加入你明确允许的白名单自动出售规则。",
+                 text="硬性规则：只卖本程序能够确认由本程序成功生产并领取的物品。\\n\\n"
+                      "不能仅凭物品名称相同、出现在仓库或价格合适就出售。必须建立生产记录，并把记录与仓库识别结果严格匹配；"
+                      "任何身份不明、记录缺失、数量对不上或 OCR 置信度不足的物品，一律跳过。\\n\\n"
+                      "当前版本尚未实现经过验证的出售识别与动作，因此自动出售保持关闭，不会执行出售点击。后续先显示待售清单供你确认，再考虑严格白名单自动出售。",
                  bg=PANEL, fg=MUTED, justify="left", wraplength=840,
                  font=("Segoe UI", 11)).pack(anchor="w", pady=(14, 18))
         tk.Label(selling, text="出售执行：未启用（避免误售）", bg=PANEL, fg=WARN,
