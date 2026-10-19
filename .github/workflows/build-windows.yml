@@ -1,0 +1,65 @@
+name: Build DeltaForceSS Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - feature/modern-windows-control-panel
+    paths:
+      - "gui.py"
+      - "main.py"
+      - "config.yaml"
+      - "user_config.yaml"
+      - "requirements.txt"
+      - ".github/workflows/build-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install ruamel.yaml pyinstaller
+
+      - name: Build GUI executable
+        shell: pwsh
+        run: |
+          pyinstaller --noconfirm --clean --onefile --windowed --name DeltaForceSS gui.py
+          Copy-Item config.yaml dist/config.yaml
+          Copy-Item user_config.yaml dist/user_config.yaml
+          @"
+          DeltaForceSS Windows build
+
+          Keep config.yaml and user_config.yaml beside DeltaForceSS.exe.
+          This build still requires a compatible Tesseract OCR installation.
+          Set TESSERACT_PATH in user_config.yaml to its executable path.
+          Run with appropriate Windows permissions, and start from the in-game
+          Special Forces Department crafting screen.
+
+          Automated selling is NOT implemented in this build. The GUI labels it
+          as disabled to avoid accidental sales.
+          "@ | Set-Content dist/README-Windows.txt -Encoding utf8
+
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeltaForceSS-Windows
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
